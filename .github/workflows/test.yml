@@ -1,10 +1,7 @@
 name: Install and Cache Tool
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   install-and-use-tool:
