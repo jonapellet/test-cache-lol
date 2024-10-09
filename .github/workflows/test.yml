@@ -24,7 +24,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.local/share
-        key: ${{ runner.os }}-my-tool-${{ hashFiles('~/.local/share') }}
+        key: ${{ runner.os }}-my-tool-${{ hashFiles('~/.local/share/**') }}
 
     - name: Install tool if cache miss
       if: steps.cache-tool.outputs.cache-hit != 'true'
@@ -40,3 +40,9 @@ jobs:
 
     - name: Use tool
       run: az --version
+
+    - name: Where the F is it ?
+      run: |
+       which az
+       python -m site --user-site
+       pip show azure-cli
