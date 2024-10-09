@@ -17,14 +17,14 @@ jobs:
 
     - name: Debug ls of ~/.local
       run: |
-        ls -la ~/.local/share || echo "Directory does not exist"
+        ls -la ~/.local/lib || echo "Directory does not exist"
 
     - name: Cache installed tool
       id: cache-tool
       uses: actions/cache@v3
       with:
-        path: ~/.local/share
-        key: ${{ runner.os }}-my-tool-${{ hashFiles('~/.local/share/**') }}
+        path: ~/.local/lib
+        key: ${{ runner.os }}-my-tool-${{ hashFiles('~/.local/**/*') }}
 
     - name: Install tool if cache miss
       if: steps.cache-tool.outputs.cache-hit != 'true'
@@ -33,10 +33,7 @@ jobs:
     
     - name: Debug ls of ~/.local after installation
       run: |
-        ls -la ~/.local/share || echo "Directory does not exist"
-
-    - name: Add tool to PATH
-      run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+        ls -la ~/.local/lib || echo "Directory does not exist"
 
     - name: Use tool
       run: az --version
@@ -45,4 +42,3 @@ jobs:
       run: |
        which az
        python -m site --user-site
-       pip show azure-cli
