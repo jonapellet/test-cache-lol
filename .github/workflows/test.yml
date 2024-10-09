@@ -1,28 +1,37 @@
-name: Test with Caching
+name: Install and Cache Tool
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  test-with-cache:
+  install-and-use-tool:
     runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v3
 
-    - name: Cache long task result
-      id: cache-result
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Cache installed tool
+      id: cache-tool
       uses: actions/cache@v3
       with:
-        path: ./result.txt
-        key: ${{ runner.os }}-long-task-result-${{ github.sha }}
+        path: ~/.local/share/my-tool
+        key: ${{ runner.os }}-my-tool-${{ hashFiles('~/.local/share/azure-cli/**') }}
 
-    - name: Run long task if cache miss
-      if: steps.cache-result.outputs.cache-hit != 'true'
+    - name: Install tool if cache miss
+      if: steps.cache-tool.outputs.cache-hit != 'true'
       run: |
-        echo "Running long task..."
-        sleep 30  # Simulate a long-running task
-        echo "Long task completed at $(date)" > result.txt
+        pip install --user --target=~/.local/share/my-tool azure-cli
 
-    - name: Use result
-      run: cat result.txt
+    - name: Add tool to PATH
+      run: echo "$HOME/.local/share/my-tool/bin" >> $GITHUB_PATH
+
+    - name: Use tool
+      run: az --version
