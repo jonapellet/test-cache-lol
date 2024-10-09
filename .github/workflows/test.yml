@@ -15,6 +15,10 @@ jobs:
       with:
         python-version: '3.x'
 
+    - name: Debug ls of ~/.local/share/my-tool
+      run: |
+        ls -la ~/.local/share/my-tool || echo "Directory does not exist"
+
     - name: Cache installed tool
       id: cache-tool
       uses: actions/cache@v3
@@ -25,7 +29,11 @@ jobs:
     - name: Install tool if cache miss
       if: steps.cache-tool.outputs.cache-hit != 'true'
       run: |
-        pip install --target=~/.local/share/my-tool azure-cli
+        pip install --target=~/.local/share/my-tool azure-cli 
+    
+    - name: Debug ls of ~/.local/share/my-tool after installation
+      run: |
+        ls -la ~/.local/share/my-tool || echo "Directory does not exist"
 
     - name: Add tool to PATH
       run: echo "$HOME/.local/share/my-tool/bin" >> $GITHUB_PATH
