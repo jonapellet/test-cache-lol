@@ -1,0 +1,32 @@
+name: Test with Caching
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-with-cache:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache script output
+      uses: actions/cache@v3
+      with:
+        path: ./output
+        key: ${{ runner.os }}-script-output-${{ hashFiles('**/long_running_script.sh') }}
+
+    - name: Run long script if cache miss
+      if: steps.cache-output.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p output
+        echo "Running long script..."
+        ./long_running_script.sh > output/result.txt
+
+    - name: Use cached output
+      run: cat output/result.txt
+
+    - name: Run tests
+      run: |
+        echo "Running tests using the output..."
+        # Add your test commands here
