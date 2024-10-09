@@ -15,16 +15,13 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Debug ls of ~/.local
-      run: |
-        ls -la ~/.local/lib || echo "Directory does not exist"
 
     - name: Cache installed tool
       id: cache-tool
       uses: actions/cache@v3
       with:
         path: ~/.local/lib
-        key: ${{ runner.os }}-my-tool-${{ hashFiles('~/.local/**/*') }}
+        key: ${{ runner.os }}-my-tool-${{ hashFiles('.github/workflows/test.yml') }}
 
     - name: Install tool if cache miss
       if: steps.cache-tool.outputs.cache-hit != 'true'
