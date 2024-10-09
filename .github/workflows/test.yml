@@ -10,23 +10,19 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Cache script output
+    - name: Cache long task result
+      id: cache-result
       uses: actions/cache@v3
       with:
-        path: ./output
-        key: ${{ runner.os }}-script-output-${{ hashFiles('**/long_running_script.sh') }}
+        path: ./result.txt
+        key: ${{ runner.os }}-long-task-result-${{ github.sha }}
 
-    - name: Run long script if cache miss
-      if: steps.cache-output.outputs.cache-hit != 'true'
+    - name: Run long task if cache miss
+      if: steps.cache-result.outputs.cache-hit != 'true'
       run: |
-        mkdir -p output
-        echo "Running long script..."
-        ./long_running_script.sh > output/result.txt
+        echo "Running long task..."
+        sleep 30  # Simulate a long-running task
+        echo "Long task completed at $(date)" > result.txt
 
-    - name: Use cached output
-      run: cat output/result.txt
-
-    - name: Run tests
-      run: |
-        echo "Running tests using the output..."
-        # Add your test commands here
+    - name: Use result
+      run: cat result.txt
