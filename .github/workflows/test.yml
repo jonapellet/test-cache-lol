@@ -25,7 +25,7 @@ jobs:
     - name: Install tool if cache miss
       if: steps.cache-tool.outputs.cache-hit != 'true'
       run: |
-        pip install --user --target=~/.local/share/my-tool azure-cli
+        pip install --target=~/.local/share/my-tool azure-cli
 
     - name: Add tool to PATH
       run: echo "$HOME/.local/share/my-tool/bin" >> $GITHUB_PATH
